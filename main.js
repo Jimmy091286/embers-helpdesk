@@ -8,19 +8,22 @@ let mainWindow;
 function setupUserDataPath() {
   // Standard-Pfad ermitteln
   const defaultPath = app.getPath('userData');
-  console.log("Default User Data Path: ", defaultPath);
+  console.log("Standard User Data Pfad:", defaultPath);
 
   // Benutzerdefinierten Pfad festlegen (optional)
-  const customPath = path.join('C:\\Users\\Embers\\helpdesk_data');
+  const customPath = path.join('C:', 'Users', 'Embers', 'helpdesk_data');
   if (!fs.existsSync(customPath)) {
     fs.mkdirSync(customPath, { recursive: true }); // Ordner erstellen, falls nicht vorhanden
+    console.log("Benutzerdefinierter Pfad erstellt:", customPath);
   }
+
+  // Setze den neuen Speicherpfad
   app.setPath('userData', customPath);
-  console.log("Custom User Data Path: ", app.getPath('userData'));
+  console.log("Benutzerdefinierter User Data Pfad gesetzt:", app.getPath('userData'));
 
   // Sicherstellen, dass das Datenverzeichnis existiert
   if (!fs.existsSync(app.getPath('userData'))) {
-    console.error("User data directory does not exist!");
+    console.error("Das User-Datenverzeichnis existiert nicht!");
   }
 }
 
@@ -35,12 +38,18 @@ function createWindow() {
     title: 'Embers-Helpdesk', // Fenstertitel anpassen
     icon: path.join(__dirname, 'assets', 'icon.png'), // Pfad zu deinem Symbol
     webPreferences: {
-      nodeIntegration: true, // Zugriff auf Node.js (falls benötigt)
+      preload: path.join(__dirname, 'preload.js'), // Sichere Methode, um Node.js-Funktionen zu integrieren
+      contextIsolation: true, // Sichere Isolation des Kontextes
+      enableRemoteModule: false, // Remote Module deaktivieren, falls nicht benötigt
+      nodeIntegration: false, // Vermeiden von Node.js-Integration aus Sicherheitsgründen
     },
   });
 
   // Webanwendung laden
-  mainWindow.loadURL('https://embers-helpdesk.vercel.app/'); // Ersetze mit deiner URL
+  const appUrl = 'https://embers-helpdesk.vercel.app//';
+  mainWindow.loadURL(appUrl).catch((error) => {
+    console.error(`Fehler beim Laden der URL: ${appUrl}`, error);
+  });
 
   // Wenn das Fenster geschlossen wird, setze die Variable zurück
   mainWindow.on('closed', () => {
