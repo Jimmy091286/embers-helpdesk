@@ -40,7 +40,7 @@ function createWindow() {
   });
 
   // Webanwendung laden
-  mainWindow.loadURL('https://fehlerhandbuch-542l.vercel.app/'); // Ersetze mit deiner URL
+  mainWindow.loadURL('https://embers-helpdesk.vercel.app/'); // Ersetze mit deiner URL
 
   // Wenn das Fenster geschlossen wird, setze die Variable zurück
   mainWindow.on('closed', () => {
